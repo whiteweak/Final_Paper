@@ -1,0 +1,382 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>IIR_GA_Main</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-12-22"><meta name="DC.source" content="IIR_GA_Main.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">1.&#30011;&#24615;&#33021;&#34920;&#38754;&#22270;&#24418;</a></li><li><a href="#3">2.GA&#23547;&#27714;&#26368;&#20339;&#35299;</a></li><li><a href="#4">3.GA&#23547;&#20248;&#65288;&#21487;&#21152;&#20837;LMS&#31639;&#23376;&#65289;</a></li><li><a href="#5">&#21160;&#30011;&#28436;&#31034;GA&#23547;&#20248;&#36807;&#31243;</a></li><li><a href="#6">4.&#23398;&#20064;&#26354;&#32447;&#12289;&#26435;&#20540;&#36845;&#20195;&#26354;&#32447;</a></li></ul></div><pre class="codeinput"><span class="comment">%%*******************IIR-GA-Main***********************%%</span>
+<span class="comment">%   &#27492;&#20026;&#29992;GA&#31639;&#27861;&#23454;&#29616;P113&#31995;&#32479;&#36776;&#35782;&#30340;&#20363;&#23376;</span>
+<span class="comment">%   &#21442;&#25968;&#33539;&#22260;a-&gt;(0,2)  b1-&gt;(-2,2)  b2-&gt;(-1,1)</span>
+<span class="comment">%   select-&gt;&#36873;&#25321;&#20989;&#25968;  cross-&gt;&#20132;&#21449;&#20989;&#25968;   mutation-&gt;&#21464;&#24322;&#20989;&#25968;</span>
+<span class="comment">%   trans-&gt;&#32534;&#30721;&#36716;&#25442;&#20989;&#25968;(&#19981;&#38656;&#35201;)</span>
+<span class="comment">%   &#31179;&#38451;---&#26368;&#21518;&#20462;&#25913;2015-11-29</span>
+</pre><h2>1.&#30011;&#24615;&#33021;&#34920;&#38754;&#22270;&#24418;<a name="2"></a></h2><pre class="codeinput">clear <span class="string">all</span>;close <span class="string">all</span>;clc
+tic
+<span class="comment">%%%%---------------------&#30011;&#24615;&#33021;&#34920;&#38754;&#21450;&#26368;&#20339;&#26435;----------------------%%%</span>
+syms <span class="string">z</span>;
+H0=1/((1-1.2*z^(-1)+0.6*z^(-2))*(1-1.2*z+0.6*z^2))*(1/z);<span class="comment">%%%&#27714;phidd(0)</span>
+phidd0=RESIDUE(H0);     <span class="comment">%3.5714</span>
+[b1,b2]=meshgrid(-2:0.02:2,-1:0.01:1);
+
+<span class="comment">%%----&#23558;&#24615;&#33021;&#20989;&#25968;&#30340;&#22260;&#32447;&#31215;&#20998;&#37096;&#20998;&#20998;&#25104;&#20004;&#20010;&#37096;&#20998;&#29992;&#30041;&#25968;&#27714;&#22260;&#32447;&#31215;&#20998;----</span>
+rt1=0.5*(b1+sqrt(b1.^2+4*b2));<span class="comment">%%rt1&#12289;rt2&#20026;&#20849;&#36717;&#22797;&#26681;&#65292;rt3&#12289;rt4&#20026;&#21069;&#20004;&#26681;&#20498;&#25968;&#65307;</span>
+rt2=0.5*(b1-sqrt(b1.^2+4*b2));
+<span class="comment">%</span>
+rt1=rt1.*(abs(rt1)&lt;1)+100*(abs(rt1)&gt;=1);
+rt2=rt2.*(abs(rt2)&lt;1)+100*(abs(rt2)&gt;=1);
+
+<span class="comment">% rt3=1./rt1;rt4=1./rt2,&#20294;&#30001;&#20110;&#26410;&#30693;&#31995;&#32479;&#26159;&#31283;&#23450;&#31995;&#32479;&#65292;&#32780;&#20854;&#26497;&#28857;&#21363;&#20026;rt1&#12289;rt2&#65292;</span>
+<span class="comment">%&#22312;&#21333;&#20301;&#22278;&#20869;&#65292;&#25152;&#20197;&#22312;&#31283;&#23450;&#26465;&#20214;&#19979;rt3&#12289;rt4&#22788;&#20110;&#21333;&#20301;&#22278;&#22806;&#65292;&#19981;&#21442;&#19982;&#30041;&#25968;&#35745;&#31639;&#65307;</span>
+res1=rt1./((1-rt1.*rt1).*(1-rt1.*rt2).*(rt1-rt2));<span class="comment">%%&#35745;&#31639;rt1&#22788;&#30340;&#30041;&#25968;</span>
+res2=rt2./((1-rt2.*rt1).*(1-rt2.*rt2).*(rt2-rt1));<span class="comment">%%&#35745;&#31639;rt2&#22788;&#30340;&#30041;&#25968;</span>
+<span class="comment">%PART2---&#35813;&#24335;&#20026;-2*phidx(z)*H(z)/z</span>
+<span class="comment">% H2=-2*z/((1-1.2*z+0.6*z^2).*(z^2-b1*z-b2));&#20855;&#26377;&#22235;&#20010;&#26681;&#65292;&#20998;&#21035;&#20026;rt1,rt2,</span>
+<span class="comment">%1+0.8165i,1-0.8156i,&#20294;&#21518;&#20004;&#20010;&#26681;&#22312;&#21333;&#20301;&#22278;&#22806;&#65292;&#24573;&#30053;</span>
+res3=-2*rt1./((1-1.2*rt1+0.6*rt1.^2).*(rt1-rt2));
+res4=-2*rt2./((1-1.2*rt2+0.6*rt2.^2).*(rt2-rt1));
+ksi=phidd0+res1+res2+res3+res4;     <span class="comment">%%%%&#24615;&#33021;&#34920;&#38754;&#20989;&#25968;</span>
+v=5*[0.1,0.3,0.5,0.7,0.9,0.99];<span class="comment">%%ksi&#20559;&#22823;&#21487;&#33021;&#21407;&#22240;&#65306;&#35748;&#20026;PHIxx(z)=1&#65307;</span>
+figure(1);contour(b1,b2,ksi,v)
+axis([-2 2 -1 1]);
+hold <span class="string">on</span>
+plot(1.2,-0.6,<span class="string">'ro'</span>);<span class="comment">%&#30011;&#20986;&#26368;&#20339;&#26435;</span>
+title(<span class="string">'&#26435;&#20540;&#36845;&#20195;&#26354;&#32447;'</span>,<span class="string">'fontsize'</span>,15)
+</pre><img vspace="5" hspace="5" src="IIR_GA_Main_01.png" alt=""> <h2>2.GA&#23547;&#27714;&#26368;&#20339;&#35299;<a name="3"></a></h2><pre class="codeinput">popsize=50;     <span class="comment">%&#31181;&#32676;&#35268;&#27169;</span>
+pr=0.2;         <span class="comment">%&#31181;&#32676;&#30340;&#36873;&#25321;&#27010;&#29575;0.2  0.2</span>
+pc=0.6;         <span class="comment">%&#31181;&#32676;&#30340;&#20132;&#21449;&#27010;&#29575;0.6  0.4</span>
+pm=0.1;         <span class="comment">%&#31181;&#32676;&#30340;&#21464;&#24322;&#27010;&#29575;0.1  0.2</span>
+maxgen=100;     <span class="comment">%&#31181;&#32676;&#30340;&#26368;&#22823;&#36845;&#20195;&#27425;&#25968;</span>
+</pre><h2>3.GA&#23547;&#20248;&#65288;&#21487;&#21152;&#20837;LMS&#31639;&#23376;&#65289;<a name="4"></a></h2><pre class="codeinput">pop0=rand(popsize,3);           <span class="comment">%&#19977;&#20010;&#24453;&#27714;&#21442;&#25968;(&#22522;&#22240;)</span>
+fit=fitness(pop0);              <span class="comment">%&#35745;&#31639;&#31181;&#32676;&#30340;&#36866;&#24212;&#24230;&#20540;</span>
+wbest=zeros(maxgen,3);          <span class="comment">%&#29992;&#20197;&#20445;&#23384;&#27599;&#27425;&#36845;&#20195;&#30340;&#26368;&#20248;&#20010;&#20307;&#65288;&#26368;&#20248;&#26435;&#65289;</span>
+W=zeros(popsize,3,maxgen);
+<span class="keyword">for</span> k=1:maxgen
+    pop1=select(pop0,fit,pr);       <span class="comment">%pop0&#32463;&#36807;&#36873;&#25321;&#22797;&#21046;&#21518;&#24471;&#21040;pop1</span>
+    pop2=cross(pop1,pc);            <span class="comment">%pop1&#32463;&#36807;&#20132;&#21449;&#21518;&#24471;&#21040;pop2</span>
+    pop3=mutation(pop2,pm);         <span class="comment">%pop2&#32463;&#36807;&#21464;&#24322;&#21518;&#24471;&#21040;pop3</span>
+    popnew=pop3;                    <span class="comment">%&#32463;&#36873;&#25321;&#12289;&#20132;&#21449;&#12289;&#21464;&#24322;&#21518;&#24471;&#21040;&#30340;&#26032;&#31181;&#32676;popnew</span>
+
+    <span class="comment">%---------&#36951;&#20256;&#31639;&#27861;&#20013;&#21152;&#20837;LMS&#12289;SHARF&#31639;&#23376;------------%</span>
+<span class="comment">%     flag='SHARF';</span>
+<span class="comment">%     ps=0.5;K=10;%&#31639;&#23376;&#30340;&#25191;&#34892;&#27010;&#29575;&#21450;&#36845;&#20195;&#27425;&#25968;</span>
+<span class="comment">%     popnew=myoperator(popnew,flag,ps,K);</span>
+    <span class="comment">%--------------LMS&#31639;&#23376;&#25191;&#34892;&#32467;&#26463;-END------------%</span>
+
+    pop0=popnew;
+    fit=fitness(pop0);
+    <span class="comment">%------------&#25214;&#21040;&#27599;&#27425;&#36845;&#20195;&#30340;&#26368;&#20248;&#26435;&#24182;&#20445;&#23384;----------%</span>
+    ind=find(fit==min(fit),1);
+    wbest(k,:)=pop0(ind,:);
+    W(:,:,k)=[2*pop0(:,1),4*pop0(:,2)-2,2*pop0(:,3)-1];
+<span class="keyword">end</span>
+toc
+
+<span class="comment">%------------&#24471;&#21040;&#26368;&#21518;&#19968;&#27425;&#36845;&#20195;&#21518;&#30340;&#31181;&#32676;-------------------%</span>
+[~,index]=sort(fit);
+pop=pop0(index,:);
+a0c=pop(:,1);b1c=pop(:,2);b2c=pop(:,3);
+
+a0=a0c*(2-0)+0;b1=b1c*(2+2)-2;b2=b2c*(1+1)-1;     <span class="comment">%&#35299;&#30721;&#21518;&#24471;&#21040;a0  b1  b2&#30340;&#30495;&#23454;&#20540;</span>
+w=[a0,b1,b2];
+disp(w(1:5,:))           <span class="comment">%&#26174;&#31034;&#26368;&#21518;&#19968;&#27425;&#36845;&#20195;&#21518;&#30340;&#21069;5&#20010;&#26368;&#20248;&#20010;&#20307;</span>
+
+<span class="comment">%-----------------&#24471;&#21040;&#27599;&#27425;&#36845;&#20195;&#30340;&#26368;&#20248;&#26435;(&#35299;&#30721;&#21518;)------------------%</span>
+wb(:,1)=wbest(:,1)*(2-0)+0;
+wb(:,2)=wbest(:,2)*(2+2)-2;
+wb(:,3)=wbest(:,3)*(1+1)-1;
+</pre><pre class="codeoutput">&#26102;&#38388;&#24050;&#36807; 6.959621 &#31186;&#12290;
+    0.9892    1.1611   -0.5682
+    0.9978    1.1615   -0.5687
+    0.9845    1.1613   -0.5660
+    1.0020    1.1624   -0.5691
+    0.9946    1.1612   -0.5651
+
+</pre><h2>&#21160;&#30011;&#28436;&#31034;GA&#23547;&#20248;&#36807;&#31243;<a name="5"></a></h2><p>---------&#30011;&#20986;&#27599;&#27425;&#31181;&#32676;&#30340;&#21464;&#21270;&#20998;&#24067;----------%</p><pre class="codeinput">fig=figure(1);
+h0=plot(wb(:,2),wb(:,3),<span class="string">'b*'</span>);
+xlabel(<span class="string">'b1'</span>,<span class="string">'fontsize'</span>,15);ylabel(<span class="string">'b2'</span>,<span class="string">'fontsize'</span>,15);
+<span class="comment">% title('GA-LMS&#23547;&#20248;')</span>
+title(<span class="string">'GA&#23547;&#20248;'</span>,<span class="string">'fontsize'</span>,15)
+legend(<span class="string">'&#31561;&#39640;&#32447;'</span>,<span class="string">'&#26368;&#20339;&#26435;'</span>,<span class="string">'GA&#31181;&#32676;'</span>)
+<span class="comment">% figure(1);k=10; title(['GA-LMS&#23547;&#20248;(k=' num2str(k) ')']);</span>
+<span class="comment">% set(h0,'xdata',W(:,2,k));</span>
+<span class="comment">%     set(h0,'ydata',W(:,3,k));</span>
+
+<span class="comment">% for k=[1,10:10:maxgen]</span>
+<span class="comment">%     set(h0,'xdata',W(:,2,k));</span>
+<span class="comment">%     set(h0,'ydata',W(:,3,k));</span>
+<span class="comment">%     title(['GA-LMS&#23547;&#20248;(k=' num2str(k) ')'],'fontsize',15);</span>
+<span class="comment">%     pause(1);</span>
+<span class="comment">% %     drawnow;</span>
+<span class="comment">% end</span>
+
+aviobj = avifile(<span class="string">'GA.avi'</span>,<span class="string">'compression'</span>,<span class="string">'None'</span>);
+ <span class="keyword">for</span> k=[(1:9),10:5:maxgen]
+    set(h0,<span class="string">'xdata'</span>,W(:,2,k));
+    set(h0,<span class="string">'ydata'</span>,W(:,3,k));
+<span class="comment">%     title(['GA-LMS&#23547;&#20248;(k=' num2str(k) ')']);</span>
+title([<span class="string">'GA&#23547;&#20248;(k='</span> num2str(k) <span class="string">')'</span>],<span class="string">'fontsize'</span>,15);
+<span class="comment">%     pause(1);</span>
+<span class="comment">%     drawnow;</span>
+
+    F=getframe(fig);<span class="comment">%&#33719;&#21462;&#24403;&#21069;&#30011;&#38754;</span>
+    aviobj=addframe(aviobj,F);<span class="comment">%&#21152;&#20837;avi&#23545;&#35937;&#20013;</span>
+    im=frame2im(F);<span class="comment">%&#36716;&#25104;gif&#22270;&#29255;&#65292;&#21482;&#33021;&#29992;256&#33394;</span>
+    [I map]=rgb2ind(im,256);
+    <span class="comment">%=-&#20889;&#20837;GIF89a&#26684;&#24335;&#25991;&#20214;%----</span>
+    <span class="keyword">if</span> k==1
+        imwrite(I,map,<span class="string">'GA.gif'</span>,<span class="string">'GIF'</span>, <span class="string">'Loopcount'</span>,inf,<span class="string">'DelayTime'</span>,1);
+    <span class="keyword">else</span>
+         imwrite(I,map,<span class="string">'GA.gif'</span>,<span class="string">'GIF'</span>,<span class="string">'WriteMode'</span>,<span class="string">'append'</span>,<span class="string">'DelayTime'</span>,1);
+    <span class="keyword">end</span>
+ <span class="keyword">end</span>
+close(fig);
+<span class="comment">%&#20851;&#38381;avi&#23545;&#35937;</span>
+aciobj=close(aviobj);
+</pre><pre class="codeoutput">&#35686;&#21578;: &#26410;&#26469;&#30340;&#29256;&#26412;&#20013;&#23558;&#20250;&#21024;&#38500; AVIFILE&#12290;&#35831;&#25913;&#29992; VIDEOWRITER&#12290; 
+</pre><h2>4.&#23398;&#20064;&#26354;&#32447;&#12289;&#26435;&#20540;&#36845;&#20195;&#26354;&#32447;<a name="6"></a></h2><pre class="codeinput">ksi=myfunksi(wb);
+figure(2)
+plot(ksi)
+xlabel(<span class="string">'k'</span>,<span class="string">'fontsize'</span>,15);ylabel(<span class="string">'{\xi}'</span>,<span class="string">'fontsize'</span>,15);title(<span class="string">'&#23398;&#20064;&#26354;&#32447;{\xi}-k'</span>,<span class="string">'fontsize'</span>,15)
+<span class="comment">%---&#26435;&#20540;&#21333;&#19968;&#36845;&#20195;&#26354;&#32447;---%</span>
+figure(3)
+subplot(311);plot(wb(:,1));xlabel(<span class="string">'k'</span>,<span class="string">'fontsize'</span>,15);ylabel(<span class="string">'a0'</span>,<span class="string">'fontsize'</span>,15);
+title(<span class="string">'&#26435;&#20540;&#36845;&#20195;&#20540;'</span>,<span class="string">'fontsize'</span>,15);hold <span class="string">on</span>;plot(ones(1,maxgen),<span class="string">'r'</span>)
+subplot(312);plot(wb(:,2));xlabel(<span class="string">'k'</span>,<span class="string">'fontsize'</span>,15);ylabel(<span class="string">'b1'</span>,<span class="string">'fontsize'</span>,15);
+hold <span class="string">on</span>;plot(1.2*ones(1,maxgen),<span class="string">'r'</span>)
+subplot(313);plot(wb(:,3));xlabel(<span class="string">'k'</span>,<span class="string">'fontsize'</span>,15);ylabel(<span class="string">'b2'</span>,<span class="string">'fontsize'</span>,15);
+hold <span class="string">on</span>;plot(-0.6*ones(1,maxgen),<span class="string">'r'</span>)
+
+<span class="comment">% figure(3)</span>
+<span class="comment">% k=1:maxgen;</span>
+<span class="comment">% plot(k,wb(:,1),'r',k,1*ones(1,maxgen),'k',k,wb(:,2),'r',k,1.2*ones(1,maxgen),'k',...</span>
+<span class="comment">%     k,wb(:,3),'r',k,-0.6*ones(1,maxgen),'k')</span>
+<span class="comment">% set(gca,'ytick',[-0.6 0,1,1.2])</span>
+<span class="comment">% xlabel('k','fontsize',15);ylabel('w','fontsize',15);title('&#26435;&#20540;&#36845;&#20195;&#26354;&#32447;','fontsize',15)</span>
+<span class="comment">% legend('&#26435;&#36845;&#20195;&#36807;&#31243;w(a0,b1,b2)','&#26368;&#20339;&#26435;&#20540;wbest(a0,b1,b2)','location','best')</span>
+</pre><img vspace="5" hspace="5" src="IIR_GA_Main_02.png" alt=""> <img vspace="5" hspace="5" src="IIR_GA_Main_03.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%%*******************IIR-GA-Main***********************%%
+%   此为用GA算法实现P113系统辨识的例子
+%   参数范围a->(0,2)  b1->(-2,2)  b2->(-1,1)
+%   select->选择函数  cross->交叉函数   mutation->变异函数
+%   trans->编码转换函数(不需要)
+%   秋阳REPLACE_WITH_DASH_DASH-最后修改2015-11-29
+
+%% 1.画性能表面图形
+clear all;close all;clc
+tic
+%%%%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-画性能表面及最佳权REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH%%%
+syms z;
+H0=1/((1-1.2*z^(-1)+0.6*z^(-2))*(1-1.2*z+0.6*z^2))*(1/z);%%%求phidd(0)
+phidd0=RESIDUE(H0);     %3.5714
+[b1,b2]=meshgrid(-2:0.02:2,-1:0.01:1);
+
+%%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH将性能函数的围线积分部分分成两个部分用留数求围线积分REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+rt1=0.5*(b1+sqrt(b1.^2+4*b2));%%rt1、rt2为共轭复根，rt3、rt4为前两根倒数；
+rt2=0.5*(b1-sqrt(b1.^2+4*b2));
+% 
+rt1=rt1.*(abs(rt1)<1)+100*(abs(rt1)>=1);
+rt2=rt2.*(abs(rt2)<1)+100*(abs(rt2)>=1);
+
+% rt3=1./rt1;rt4=1./rt2,但由于未知系统是稳定系统，而其极点即为rt1、rt2，
+%在单位圆内，所以在稳定条件下rt3、rt4处于单位圆外，不参与留数计算；
+res1=rt1./((1-rt1.*rt1).*(1-rt1.*rt2).*(rt1-rt2));%%计算rt1处的留数
+res2=rt2./((1-rt2.*rt1).*(1-rt2.*rt2).*(rt2-rt1));%%计算rt2处的留数
+%PART2REPLACE_WITH_DASH_DASH-该式为-2*phidx(z)*H(z)/z
+% H2=-2*z/((1-1.2*z+0.6*z^2).*(z^2-b1*z-b2));具有四个根，分别为rt1,rt2,
+%1+0.8165i,1-0.8156i,但后两个根在单位圆外，忽略
+res3=-2*rt1./((1-1.2*rt1+0.6*rt1.^2).*(rt1-rt2));
+res4=-2*rt2./((1-1.2*rt2+0.6*rt2.^2).*(rt2-rt1));
+ksi=phidd0+res1+res2+res3+res4;     %%%%性能表面函数
+v=5*[0.1,0.3,0.5,0.7,0.9,0.99];%%ksi偏大可能原因：认为PHIxx(z)=1；
+figure(1);contour(b1,b2,ksi,v)
+axis([-2 2 -1 1]);
+hold on
+plot(1.2,-0.6,'ro');%画出最佳权
+title('权值迭代曲线','fontsize',15)
+
+
+%% 2.GA寻求最佳解
+popsize=50;     %种群规模
+pr=0.2;         %种群的选择概率0.2  0.2
+pc=0.6;         %种群的交叉概率0.6  0.4
+pm=0.1;         %种群的变异概率0.1  0.2
+maxgen=100;     %种群的最大迭代次数
+
+
+%% 3.GA寻优（可加入LMS算子）
+pop0=rand(popsize,3);           %三个待求参数(基因)
+fit=fitness(pop0);              %计算种群的适应度值
+wbest=zeros(maxgen,3);          %用以保存每次迭代的最优个体（最优权）
+W=zeros(popsize,3,maxgen);
+for k=1:maxgen
+    pop1=select(pop0,fit,pr);       %pop0经过选择复制后得到pop1
+    pop2=cross(pop1,pc);            %pop1经过交叉后得到pop2
+    pop3=mutation(pop2,pm);         %pop2经过变异后得到pop3
+    popnew=pop3;                    %经选择、交叉、变异后得到的新种群popnew
+    
+    %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-遗传算法中加入LMS、SHARF算子REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH%
+%     flag='SHARF';
+%     ps=0.5;K=10;%算子的执行概率及迭代次数
+%     popnew=myoperator(popnew,flag,ps,K); 
+    %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHLMS算子执行结束-ENDREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH%
+    
+    pop0=popnew;
+    fit=fitness(pop0); 
+    %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH找到每次迭代的最优权并保存REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH%
+    ind=find(fit==min(fit),1);
+    wbest(k,:)=pop0(ind,:);   
+    W(:,:,k)=[2*pop0(:,1),4*pop0(:,2)-2,2*pop0(:,3)-1];
+end
+toc
+
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH得到最后一次迭代后的种群REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-%
+[~,index]=sort(fit);
+pop=pop0(index,:);
+a0c=pop(:,1);b1c=pop(:,2);b2c=pop(:,3);
+
+a0=a0c*(2-0)+0;b1=b1c*(2+2)-2;b2=b2c*(1+1)-1;     %解码后得到a0  b1  b2的真实值
+w=[a0,b1,b2];
+disp(w(1:5,:))           %显示最后一次迭代后的前5个最优个体
+
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-得到每次迭代的最优权(解码后)REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH%
+wb(:,1)=wbest(:,1)*(2-0)+0;
+wb(:,2)=wbest(:,2)*(2+2)-2;
+wb(:,3)=wbest(:,3)*(1+1)-1;
+
+
+%% 动画演示GA寻优过程
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-画出每次种群的变化分布REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH%
+fig=figure(1);
+h0=plot(wb(:,2),wb(:,3),'b*');
+xlabel('b1','fontsize',15);ylabel('b2','fontsize',15);
+% title('GA-LMS寻优')
+title('GA寻优','fontsize',15)
+legend('等高线','最佳权','GA种群')
+% figure(1);k=10; title(['GA-LMS寻优(k=' num2str(k) ')']);
+% set(h0,'xdata',W(:,2,k));
+%     set(h0,'ydata',W(:,3,k));
+
+% for k=[1,10:10:maxgen]
+%     set(h0,'xdata',W(:,2,k));
+%     set(h0,'ydata',W(:,3,k));
+%     title(['GA-LMS寻优(k=' num2str(k) ')'],'fontsize',15);
+%     pause(1);
+% %     drawnow;
+% end
+
+aviobj = avifile('GA.avi','compression','None');
+ for k=[(1:9),10:5:maxgen]
+    set(h0,'xdata',W(:,2,k));
+    set(h0,'ydata',W(:,3,k));
+%     title(['GA-LMS寻优(k=' num2str(k) ')']);
+title(['GA寻优(k=' num2str(k) ')'],'fontsize',15);
+%     pause(1);
+%     drawnow;
+    
+    F=getframe(fig);%获取当前画面
+    aviobj=addframe(aviobj,F);%加入avi对象中
+    im=frame2im(F);%转成gif图片，只能用256色
+    [I map]=rgb2ind(im,256);
+    %=-写入GIF89a格式文件%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+    if k==1
+        imwrite(I,map,'GA.gif','GIF', 'Loopcount',inf,'DelayTime',1);
+    else
+         imwrite(I,map,'GA.gif','GIF','WriteMode','append','DelayTime',1);
+    end
+ end
+close(fig);
+%关闭avi对象
+aciobj=close(aviobj);
+
+
+
+%% 4.学习曲线、权值迭代曲线
+ksi=myfunksi(wb);
+figure(2)
+plot(ksi)
+xlabel('k','fontsize',15);ylabel('{\xi}','fontsize',15);title('学习曲线{\xi}-k','fontsize',15)
+%REPLACE_WITH_DASH_DASH-权值单一迭代曲线REPLACE_WITH_DASH_DASH-%
+figure(3)
+subplot(311);plot(wb(:,1));xlabel('k','fontsize',15);ylabel('a0','fontsize',15);
+title('权值迭代值','fontsize',15);hold on;plot(ones(1,maxgen),'r')
+subplot(312);plot(wb(:,2));xlabel('k','fontsize',15);ylabel('b1','fontsize',15);
+hold on;plot(1.2*ones(1,maxgen),'r')
+subplot(313);plot(wb(:,3));xlabel('k','fontsize',15);ylabel('b2','fontsize',15);
+hold on;plot(-0.6*ones(1,maxgen),'r')
+
+% figure(3)
+% k=1:maxgen;
+% plot(k,wb(:,1),'r',k,1*ones(1,maxgen),'k',k,wb(:,2),'r',k,1.2*ones(1,maxgen),'k',...
+%     k,wb(:,3),'r',k,-0.6*ones(1,maxgen),'k')
+% set(gca,'ytick',[-0.6 0,1,1.2])
+% xlabel('k','fontsize',15);ylabel('w','fontsize',15);title('权值迭代曲线','fontsize',15)
+% legend('权迭代过程w(a0,b1,b2)','最佳权值wbest(a0,b1,b2)','location','best')
+
+
+
+
+##### SOURCE END #####
+--></body></html>
